@@ -238,7 +238,7 @@
     <!-- หน้าจอ iPod -->
     <div class="ipod-screen">
         <div class="screen-header">
-            <span>iPod</span>
+            <span id="clock">00:00</span>
             <i class="fa-solid fa-battery-full"></i>
         </div>
         <div class="screen-content">
@@ -255,8 +255,8 @@
     <!-- Click Wheel -->
     <div class="click-wheel">
         <span class="wheel-btn btn-menu" onclick="focusSearch()">MENU</span>
-        <span class="wheel-btn btn-prev" onclick="seekRelative(-10)"><i class="fa-solid fa-backward-step"></i></span>
-        <span class="wheel-btn btn-next" onclick="seekRelative(10)"><i class="fa-solid fa-forward-step"></i></span>
+        <span class="wheel-btn btn-prev" onclick="togglePlay()"><i class="fa-solid fa-backward-step"></i></span>
+        <span class="wheel-btn btn-next" onclick="togglePlay()"><i class="fa-solid fa-forward-step"></i></span>
         <span class="wheel-btn btn-play-pause" onclick="togglePlay()"><i class="fa-solid fa-play"></i> <i class="fa-solid fa-pause"></i></span>
         
         <div class="center-button" onclick="loadYouTube()"></div>
@@ -274,6 +274,16 @@
 
 <script>
     let isPlaying = false;
+
+    // อัปเดตเวลาแบบเรียลไทม์
+    function updateClock() {
+        const now = new Date();
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        document.getElementById('clock').innerText = `${hours}:${minutes}`;
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
 
     function extractVideoId(url) {
         if (!url) return null;
@@ -314,11 +324,6 @@
             sendIframeCommand('playVideo');
             isPlaying = true;
         }
-    }
-
-    function seekRelative(seconds) {
-        // ดึงเวลาปัจจุบันแล้วข้ามไปข้างหน้า/หลัง
-        sendIframeCommand('getCurrentTime');
     }
 
     function focusSearch() {
