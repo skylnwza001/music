@@ -97,12 +97,39 @@
             flex: 1;
             position: relative;
             background: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        /* หน้าจอเริ่มต้น (นาฬิกา) */
+        .welcome-display {
+            text-align: center;
+            color: #888;
+        }
+
+        .welcome-time {
+            font-size: 2.8rem;
+            font-weight: 300;
+            color: #fff;
+            letter-spacing: 2px;
+        }
+
+        .welcome-text {
+            font-size: 0.8rem;
+            color: #aaa;
+            margin-top: 4px;
         }
 
         iframe {
             width: 100%;
             height: 100%;
             border: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: none;
         }
 
         /* ช่องใส่ URL ค้นหา */
@@ -238,11 +265,17 @@
     <!-- หน้าจอ iPod -->
     <div class="ipod-screen">
         <div class="screen-header">
-            <span id="clock">00:00</span>
-            <i class="fa-solid fa-battery-full"></i>
+            <span>Music</span>
+            <span id="clockHeader">00:00</span>
         </div>
         <div class="screen-content">
-            <iframe id="ytPlayer" src="https://www.youtube.com/embed/guDJvZp5Bqk?enablejsapi=1" allow="autoplay; encrypted-media"></iframe>
+            <!-- หน้าจอเริ่มต้น -->
+            <div class="welcome-display" id="welcomeDisplay">
+                <div class="welcome-time" id="welcomeClock">00:00</div>
+                <div class="welcome-text">วางลิงก์เพื่อเล่นเพลง</div>
+            </div>
+            <!-- เครื่องเล่น YouTube -->
+            <iframe id="ytPlayer" src="" allow="autoplay; encrypted-media"></iframe>
         </div>
     </div>
 
@@ -275,12 +308,15 @@
 <script>
     let isPlaying = false;
 
-    // อัปเดตเวลาแบบเรียลไทม์
+    // อัปเดตนาฬิกาเรียลไทม์
     function updateClock() {
         const now = new Date();
         const hours = String(now.getHours()).padStart(2, '0');
         const minutes = String(now.getMinutes()).padStart(2, '0');
-        document.getElementById('clock').innerText = `${hours}:${minutes}`;
+        const timeString = `${hours}:${minutes}`;
+        
+        document.getElementById('clockHeader').innerText = timeString;
+        document.getElementById('welcomeClock').innerText = timeString;
     }
     setInterval(updateClock, 1000);
     updateClock();
@@ -308,7 +344,10 @@
         const videoId = extractVideoId(input);
         
         if (videoId) {
+            // ซ่อนหน้าจอเริ่มต้น แล้วแสดง iframe วิดีโอ
+            document.getElementById('welcomeDisplay').style.display = 'none';
             const player = document.getElementById('ytPlayer');
+            player.style.display = 'block';
             player.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&enablejsapi=1`;
             isPlaying = true;
         } else if (input) {
