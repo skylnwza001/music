@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iPod Music Player</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            user-select: none;
+        }
+
+        body {
+            background-color: #0d0f17;
+            background-image: radial-gradient(circle at 50% 30%, #1a1d2e 0%, #08090e 100%);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        /* โครงตัวเครื่อง iPod */
+        .ipod-body {
+            width: 340px;
+            height: 570px;
+            background: linear-gradient(145deg, #e6e6e6, #cccccc);
+            border-radius: 36px;
+            padding: 24px;
+            box-shadow: 
+                0 25px 50px rgba(0, 0, 0, 0.7),
+                inset 0 2px 4px rgba(255, 255, 255, 0.8),
+                inset 0 -4px 6px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            border: 1px solid #d1d1d1;
+            transition: all 0.4s ease;
+        }
+
+        /* ธีมสีตัวเครื่อง */
+        .theme-silver {
+            background: linear-gradient(145deg, #e6e6e6, #cccccc);
+            border-color: #d1d1d1;
+        }
+        .theme-spacegray {
+            background: linear-gradient(145deg, #4a4d52, #2b2c30);
+            border-color: #5a5d63;
+        }
+        .theme-purple {
+            background: linear-gradient(145deg, #5b21b6, #2e1065);
+            border-color: #7c3aed;
+        }
+        .theme-rosegold {
+            background: linear-gradient(145deg, #f43f5e, #be123c);
+            border-color: #fb7185;
+        }
+        .theme-black {
+            background: linear-gradient(145deg, #262626, #0d0d0d);
+            border-color: #333333;
+        }
+
+        /* หน้าจอ iPod */
+        .ipod-screen {
+            width: 100%;
+            height: 230px;
+            background-color: #000;
+            border-radius: 16px;
+            border: 4px solid rgba(0, 0, 0, 0.3);
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.8);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .screen-header {
+            height: 24px;
+            background: linear-gradient(to bottom, #3a3a3a, #1f1f1f);
+            color: #ddd;
+            font-size: 0.75rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 12px;
+            font-weight: bold;
+        }
+
+        .screen-content {
+            flex: 1;
+            position: relative;
+            background: #000;
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* ช่องใส่ URL ค้นหา */
+        .search-container {
+            width: 100%;
+            margin-top: 14px;
+            display: flex;
+            gap: 6px;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 8px 12px;
+            border-radius: 20px;
+            border: 1px solid #bbb;
+            font-size: 0.8rem;
+            outline: none;
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .btn-search {
+            background: #111;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 0 14px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        /* Click Wheel วงกลม */
+        .click-wheel {
+            width: 200px;
+            height: 200px;
+            background: linear-gradient(145deg, #ffffff, #e6e6e6);
+            border-radius: 50%;
+            margin-top: 20px;
+            position: relative;
+            box-shadow: 
+                0 6px 15px rgba(0,0,0,0.2),
+                inset 0 2px 4px rgba(255,255,255,1),
+                inset 0 -2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .theme-spacegray .click-wheel,
+        .theme-black .click-wheel {
+            background: linear-gradient(145deg, #1f2024, #141518);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.5), inset 0 1px 2px rgba(255,255,255,0.1);
+        }
+
+        .wheel-btn {
+            position: absolute;
+            color: #888;
+            font-size: 0.85rem;
+            font-weight: bold;
+            cursor: pointer;
+            padding: 10px;
+            transition: color 0.2s, transform 0.1s;
