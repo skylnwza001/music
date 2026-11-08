@@ -166,3 +166,172 @@
             cursor: pointer;
             padding: 10px;
             transition: color 0.2s, transform 0.1s;
+        }
+
+        .wheel-btn:active {
+            transform: scale(0.9);
+            color: #333;
+        }
+
+        .theme-spacegray .wheel-btn,
+        .theme-black .wheel-btn {
+            color: #aaa;
+        }
+
+        .btn-menu { top: 10px; font-size: 0.75rem; letter-spacing: 1px; }
+        .btn-prev { left: 12px; }
+        .btn-next { right: 12px; }
+        .btn-play-pause { bottom: 10px; }
+
+        /* ปุ่มตรงกลาง (Center Select Button) */
+        .center-button {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(145deg, #e6e6e6, #ffffff);
+            border-radius: 50%;
+            border: 1px solid #d0d0d0;
+            box-shadow: 
+                0 2px 5px rgba(0,0,0,0.1),
+                inset 0 1px 2px rgba(255,255,255,0.8);
+            cursor: pointer;
+            transition: transform 0.1s, background 0.1s;
+        }
+
+        .theme-spacegray .center-button,
+        .theme-black .center-button {
+            background: linear-gradient(145deg, #2a2b30, #1a1b1f);
+            border-color: #333;
+        }
+
+        .center-button:active {
+            transform: scale(0.94);
+        }
+
+        /* พาเนลเลือกสีธีม */
+        .color-picker {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 10px 18px;
+            border-radius: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .color-dot {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid #fff;
+            transition: transform 0.2s;
+        }
+
+        .color-dot:hover {
+            transform: scale(1.2);
+        }
+    </style>
+</head>
+<body>
+
+<div class="ipod-body theme-silver" id="ipodBody">
+    <!-- หน้าจอ iPod -->
+    <div class="ipod-screen">
+        <div class="screen-header">
+            <span>iPod</span>
+            <i class="fa-solid fa-battery-full"></i>
+        </div>
+        <div class="screen-content">
+            <iframe id="ytPlayer" src="https://www.youtube.com/embed/guDJvZp5Bqk?enablejsapi=1" allow="autoplay; encrypted-media"></iframe>
+        </div>
+    </div>
+
+    <!-- ช่องใส่ URL ค้นหา -->
+    <div class="search-container">
+        <input type="text" id="urlInput" class="search-input" placeholder="วางลิงก์ YouTube ที่นี่...">
+        <button class="btn-search" onclick="loadYouTube()">เล่น</button>
+    </div>
+
+    <!-- Click Wheel -->
+    <div class="click-wheel">
+        <span class="wheel-btn btn-menu" onclick="focusSearch()">MENU</span>
+        <span class="wheel-btn btn-prev" onclick="seekRelative(-10)"><i class="fa-solid fa-backward-step"></i></span>
+        <span class="wheel-btn btn-next" onclick="seekRelative(10)"><i class="fa-solid fa-forward-step"></i></span>
+        <span class="wheel-btn btn-play-pause" onclick="togglePlay()"><i class="fa-solid fa-play"></i> <i class="fa-solid fa-pause"></i></span>
+        
+        <div class="center-button" onclick="loadYouTube()"></div>
+    </div>
+</div>
+
+<!-- ตัวเลือกเปลี่ยนสีเครื่อง -->
+<div class="color-picker">
+    <div class="color-dot" style="background: #e6e6e6;" onclick="changeTheme('theme-silver')"></div>
+    <div class="color-dot" style="background: #4a4d52;" onclick="changeTheme('theme-spacegray')"></div>
+    <div class="color-dot" style="background: #5b21b6;" onclick="changeTheme('theme-purple')"></div>
+    <div class="color-dot" style="background: #f43f5e;" onclick="changeTheme('theme-rosegold')"></div>
+    <div class="color-dot" style="background: #111111;" onclick="changeTheme('theme-black')"></div>
+</div>
+
+<script>
+    let isPlaying = false;
+
+    function extractVideoId(url) {
+        if (!url) return null;
+        const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+        const match = url.match(regExp);
+        return (match && match[2].length === 11) ? match[2] : url.trim();
+    }
+
+    function sendIframeCommand(func, args = []) {
+        const iframe = document.getElementById('ytPlayer');
+        if (iframe && iframe.contentWindow) {
+            iframe.contentWindow.postMessage(JSON.stringify({
+                event: 'command',
+                func: func,
+                args: args
+            }), '*');
+        }
+    }
+
+    function loadYouTube() {
+        const input = document.getElementById('urlInput').value;
+        const videoId = extractVideoId(input);
+        
+        if (videoId) {
+            const player = document.getElementById('ytPlayer');
+            player.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&enablejsapi=1`;
+            isPlaying = true;
+        } else if (input) {
+            alert('กรุณากรอกลิงก์หรือ ID วิดีโอ YouTube ที่ถูกต้อง');
+        }
+    }
+
+    function togglePlay() {
+        if (isPlaying) {
+            sendIframeCommand('pauseVideo');
+            isPlaying = false;
+        } else {
+            sendIframeCommand('playVideo');
+            isPlaying = true;
+        }
+    }
+
+    function seekRelative(seconds) {
+        // ดึงเวลาปัจจุบันแล้วข้ามไปข้างหน้า/หลัง
+        sendIframeCommand('getCurrentTime');
+    }
+
+    function focusSearch() {
+        const input = document.getElementById('urlInput');
+        input.focus();
+        input.select();
+    }
+
+    function changeTheme(themeName) {
+        const ipod = document.getElementById('ipodBody');
+        ipod.className = `ipod-body ${themeName}`;
+    }
+</script>
+
+</body>
+</html>
