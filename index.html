@@ -372,3 +372,50 @@
             
             if (ytPlayer && typeof ytPlayer.loadVideoById === 'function') {
                 ytPlayer.loadVideoById(videoId);
+            } else {
+                ytPlayer = new YT.Player('player', {
+                    height: '100%',
+                    width: '100%',
+                    videoId: videoId,
+                    playerVars: {
+                        'autoplay': 1,
+                        'controls': 1,
+                        'enablejsapi': 1
+                    }
+                });
+            }
+        } else if (input) {
+            alert('กรุณากรอกลิงก์หรือ ID วิดีโอ YouTube ที่ถูกต้อง');
+        }
+    }
+
+    function togglePlay() {
+        if (!ytPlayer || typeof ytPlayer.getPlayerState !== 'function') return;
+        const state = ytPlayer.getPlayerState();
+        if (state === YT.PlayerState.PLAYING) {
+            ytPlayer.pauseVideo();
+        } else {
+            ytPlayer.playVideo();
+        }
+    }
+
+    function seekVideo(seconds) {
+        if (!ytPlayer || typeof ytPlayer.getCurrentTime !== 'function') return;
+        const currentTime = ytPlayer.getCurrentTime();
+        ytPlayer.seekTo(currentTime + seconds, true);
+    }
+
+    function focusSearch() {
+        const input = document.getElementById('urlInput');
+        input.focus();
+        input.select();
+    }
+
+    function changeTheme(themeName) {
+        const ipod = document.getElementById('ipodBody');
+        ipod.className = `ipod-body ${themeName}`;
+    }
+</script>
+
+</body>
+</html>
