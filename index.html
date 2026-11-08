@@ -30,42 +30,55 @@
         .ipod-body {
             width: 340px;
             height: 570px;
-            background: linear-gradient(145deg, #e6e6e6, #cccccc);
             border-radius: 36px;
             padding: 24px;
-            box-shadow: 
-                0 25px 50px rgba(0, 0, 0, 0.7),
-                inset 0 2px 4px rgba(255, 255, 255, 0.8),
-                inset 0 -4px 6px rgba(0, 0, 0, 0.2);
             display: flex;
             flex-direction: column;
             align-items: center;
             position: relative;
-            border: 1px solid #d1d1d1;
             transition: all 0.4s ease;
         }
 
-        /* ธีมสีตัวเครื่อง */
+        /* 5 ธีมสีใหม่หมด */
+        /* 1. Silver Classic */
         .theme-silver {
-            background: linear-gradient(145deg, #e6e6e6, #cccccc);
-            border-color: #d1d1d1;
+            background: linear-gradient(145deg, #f0f0f0, #d5d5d5);
+            border: 1px solid #c4c4c4;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.7), inset 0 2px 4px rgba(255, 255, 255, 0.9), inset 0 -4px 6px rgba(0, 0, 0, 0.15);
         }
+        .theme-silver .btn-search { background: #333; color: #fff; }
+
+        /* 2. Space Gray */
         .theme-spacegray {
-            background: linear-gradient(145deg, #4a4d52, #2b2c30);
-            border-color: #5a5d63;
+            background: linear-gradient(145deg, #6c7078, #3d3f45);
+            border: 1px solid #52555c;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.8), inset 0 2px 4px rgba(255, 255, 255, 0.25), inset 0 -4px 6px rgba(0, 0, 0, 0.4);
         }
-        .theme-purple {
-            background: linear-gradient(145deg, #5b21b6, #2e1065);
-            border-color: #7c3aed;
+        .theme-spacegray .btn-search { background: #1a1b1f; color: #fff; }
+
+        /* 3. Midnight Blue */
+        .theme-blue {
+            background: linear-gradient(145deg, #1e3a8a, #0f172a);
+            border: 1px solid #3b82f6;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.8), inset 0 2px 4px rgba(59, 130, 246, 0.4), inset 0 -4px 6px rgba(0, 0, 0, 0.5);
         }
-        .theme-rosegold {
-            background: linear-gradient(145deg, #f43f5e, #be123c);
-            border-color: #fb7185;
+        .theme-blue .btn-search { background: #3b82f6; color: #fff; }
+
+        /* 4. Sunset Pink */
+        .theme-pink {
+            background: linear-gradient(145deg, #f43f5e, #881337);
+            border: 1px solid #fb7185;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.8), inset 0 2px 4px rgba(251, 113, 133, 0.4), inset 0 -4px 6px rgba(0, 0, 0, 0.5);
         }
+        .theme-pink .btn-search { background: #e11d48; color: #fff; }
+
+        /* 5. Matte Black */
         .theme-black {
-            background: linear-gradient(145deg, #262626, #0d0d0d);
-            border-color: #333333;
+            background: linear-gradient(145deg, #222222, #080808);
+            border: 1px solid #333333;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.9), inset 0 2px 4px rgba(255, 255, 255, 0.1), inset 0 -4px 6px rgba(0, 0, 0, 0.8);
         }
+        .theme-black .btn-search { background: #444; color: #fff; }
 
         /* หน้าจอ iPod */
         .ipod-screen {
@@ -161,14 +174,17 @@
         }
 
         .btn-search {
-            background: #111;
-            color: white;
             border: none;
             border-radius: 20px;
             padding: 0 14px;
             font-size: 0.8rem;
             cursor: pointer;
             font-weight: bold;
+            transition: opacity 0.2s;
+        }
+
+        .btn-search:active {
+            opacity: 0.8;
         }
 
         /* Click Wheel วงกลม */
@@ -189,6 +205,8 @@
         }
 
         .theme-spacegray .click-wheel,
+        .theme-blue .click-wheel,
+        .theme-pink .click-wheel,
         .theme-black .click-wheel {
             background: linear-gradient(145deg, #1f2024, #141518);
             box-shadow: 0 6px 15px rgba(0,0,0,0.5), inset 0 1px 2px rgba(255,255,255,0.1);
@@ -210,6 +228,8 @@
         }
 
         .theme-spacegray .wheel-btn,
+        .theme-blue .wheel-btn,
+        .theme-pink .wheel-btn,
         .theme-black .wheel-btn {
             color: #aaa;
         }
@@ -234,6 +254,8 @@
         }
 
         .theme-spacegray .center-button,
+        .theme-blue .center-button,
+        .theme-pink .center-button,
         .theme-black .center-button {
             background: linear-gradient(145deg, #2a2b30, #1a1b1f);
             border-color: #333;
@@ -243,7 +265,7 @@
             transform: scale(0.94);
         }
 
-        /* พาเนลเลือกสีธีม */
+        /* พาเนลเลือกสีธีม (5 สีใหม่) */
         .color-picker {
             display: flex;
             gap: 12px;
@@ -305,12 +327,12 @@
     </div>
 </div>
 
-<!-- ตัวเลือกเปลี่ยนสีเครื่อง -->
+<!-- ตัวเลือกเปลี่ยนสีเครื่อง (5 สีใหม่) -->
 <div class="color-picker">
     <div class="color-dot" style="background: #e6e6e6;" onclick="changeTheme('theme-silver')"></div>
-    <div class="color-dot" style="background: #4a4d52;" onclick="changeTheme('theme-spacegray')"></div>
-    <div class="color-dot" style="background: #5b21b6;" onclick="changeTheme('theme-purple')"></div>
-    <div class="color-dot" style="background: #f43f5e;" onclick="changeTheme('theme-rosegold')"></div>
+    <div class="color-dot" style="background: #3d3f45;" onclick="changeTheme('theme-spacegray')"></div>
+    <div class="color-dot" style="background: #1e3a8a;" onclick="changeTheme('theme-blue')"></div>
+    <div class="color-dot" style="background: #f43f5e;" onclick="changeTheme('theme-pink')"></div>
     <div class="color-dot" style="background: #111111;" onclick="changeTheme('theme-black')"></div>
 </div>
 
@@ -332,9 +354,7 @@
     setInterval(updateClock, 1000);
     updateClock();
 
-    function onYouTubeIframeAPIReady() {
-        // เตรียม API ไว้ล่วงหน้า
-    }
+    function onYouTubeIframeAPIReady() {}
 
     function extractVideoId(url) {
         if (!url) return null;
@@ -352,52 +372,3 @@
             
             if (ytPlayer && typeof ytPlayer.loadVideoById === 'function') {
                 ytPlayer.loadVideoById(videoId);
-            } else {
-                ytPlayer = new YT.Player('player', {
-                    height: '100%',
-                    width: '100%',
-                    videoId: videoId,
-                    playerVars: {
-                        'autoplay': 1,
-                        'controls': 1,
-                        'enablejsapi': 1
-                    }
-                });
-            }
-        } else if (input) {
-            alert('กรุณากรอกลิงก์หรือ ID วิดีโอ YouTube ที่ถูกต้อง');
-        }
-    }
-
-    // ปุ่ม Play / Pause สลับสถานะจริง
-    function togglePlay() {
-        if (!ytPlayer || typeof ytPlayer.getPlayerState !== 'function') return;
-        const state = ytPlayer.getPlayerState();
-        if (state === YT.PlayerState.PLAYING) {
-            ytPlayer.pauseVideo();
-        } else {
-            ytPlayer.playVideo();
-        }
-    }
-
-    // ปุ่มย้อนกลับ / ข้ามไปข้างหน้า 10 วินาที
-    function seekVideo(seconds) {
-        if (!ytPlayer || typeof ytPlayer.getCurrentTime !== 'function') return;
-        const currentTime = ytPlayer.getCurrentTime();
-        ytPlayer.seekTo(currentTime + seconds, true);
-    }
-
-    function focusSearch() {
-        const input = document.getElementById('urlInput');
-        input.focus();
-        input.select();
-    }
-
-    function changeTheme(themeName) {
-        const ipod = document.getElementById('ipodBody');
-        ipod.className = `ipod-body ${themeName}`;
-    }
-</script>
-
-</body>
-</html>
