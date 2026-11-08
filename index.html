@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>iPod Music Player</title>
+    <title>Music Player</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         * {
@@ -91,6 +91,7 @@
             align-items: center;
             padding: 0 12px;
             font-weight: bold;
+            z-index: 10;
         }
 
         .screen-content {
@@ -265,8 +266,8 @@
     <!-- หน้าจอ iPod -->
     <div class="ipod-screen">
         <div class="screen-header">
-            <span>Music</span>
-            <span id="clockHeader">00:00</span>
+            <span id="screenTimeHeader">00:00</span>
+            <i class="fa-solid fa-battery-full"></i>
         </div>
         <div class="screen-content">
             <!-- หน้าจอเริ่มต้น -->
@@ -274,8 +275,8 @@
                 <div class="welcome-time" id="welcomeClock">00:00</div>
                 <div class="welcome-text">วางลิงก์เพื่อเล่นเพลง</div>
             </div>
-            <!-- เครื่องเล่น YouTube -->
-            <iframe id="ytPlayer" src="" allow="autoplay; encrypted-media"></iframe>
+            <!-- ตัวเล่น YouTube -->
+            <div id="player"></div>
         </div>
     </div>
 
@@ -288,8 +289,8 @@
     <!-- Click Wheel -->
     <div class="click-wheel">
         <span class="wheel-btn btn-menu" onclick="focusSearch()">MENU</span>
-        <span class="wheel-btn btn-prev" onclick="togglePlay()"><i class="fa-solid fa-backward-step"></i></span>
-        <span class="wheel-btn btn-next" onclick="togglePlay()"><i class="fa-solid fa-forward-step"></i></span>
+        <span class="wheel-btn btn-prev" onclick="rewind()"><i class="fa-solid fa-backward-step"></i></span>
+        <span class="wheel-btn btn-next" onclick="fastForward()"><i class="fa-solid fa-forward-step"></i></span>
         <span class="wheel-btn btn-play-pause" onclick="togglePlay()"><i class="fa-solid fa-play"></i> <i class="fa-solid fa-pause"></i></span>
         
         <div class="center-button" onclick="loadYouTube()"></div>
@@ -305,21 +306,28 @@
     <div class="color-dot" style="background: #111111;" onclick="changeTheme('theme-black')"></div>
 </div>
 
+<!-- โหลด YouTube IFrame Player API -->
+<script src="https://www.youtube.com/iframe_api"></script>
 <script>
-    let isPlaying = false;
+    let player;
+    let isApiReady = false;
 
-    // อัปเดตนาฬิกาเรียลไทม์
+    // อัปเดตเวลาบนหน้าจอ
     function updateClock() {
         const now = new Date();
         const hours = String(now.getHours()).padStart(2, '0');
         const minutes = String(now.getMinutes()).padStart(2, '0');
         const timeString = `${hours}:${minutes}`;
         
-        document.getElementById('clockHeader').innerText = timeString;
+        document.getElementById('screenTimeHeader').innerText = timeString;
         document.getElementById('welcomeClock').innerText = timeString;
     }
     setInterval(updateClock, 1000);
     updateClock();
+
+    function onYouTubeIframeAPIReady() {
+        isApiReady = true;
+    }
 
     function extractVideoId(url) {
         if (!url) return null;
@@ -328,41 +336,51 @@
         return (match && match[2].length === 11) ? match[2] : url.trim();
     }
 
-    function sendIframeCommand(func, args = []) {
-        const iframe = document.getElementById('ytPlayer');
-        if (iframe && iframe.contentWindow) {
-            iframe.contentWindow.postMessage(JSON.stringify({
-                event: 'command',
-                func: func,
-                args: args
-            }), '*');
-        }
-    }
-
     function loadYouTube() {
         const input = document.getElementById('urlInput').value;
         const videoId = extractVideoId(input);
         
         if (videoId) {
-            // ซ่อนหน้าจอเริ่มต้น แล้วแสดง iframe วิดีโอ
             document.getElementById('welcomeDisplay').style.display = 'none';
-            const player = document.getElementById('ytPlayer');
-            player.style.display = 'block';
-            player.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&enablejsapi=1`;
-            isPlaying = true;
+            
+            if (player) {
+                player.loadVideoById(videoId);
+            } else {
+                player = new YT.Player('player', {
+                    height: '100%',
+                    width: '100%',
+                    videoId: videoId,
+                    playerVars: {
+                        'autoplay': 1,
+                        'controls': 1
+                    }
+                });
+            }
         } else if (input) {
             alert('กรุณากรอกลิงก์หรือ ID วิดีโอ YouTube ที่ถูกต้อง');
         }
     }
 
     function togglePlay() {
-        if (isPlaying) {
-            sendIframeCommand('pauseVideo');
-            isPlaying = false;
+        if (!player || typeof player.getPlayerState !== 'function') return;
+        const state = player.getPlayerState();
+        if (state === YT.PlayerState.PLAYING) {
+            player.pauseVideo();
         } else {
-            sendIframeCommand('playVideo');
-            isPlaying = true;
+            player.playVideo();
         }
+    }
+
+    function rewind() {
+        if (!player || typeof player.getCurrentTime !== 'function') return;
+        const currTime = player.getCurrentTime();
+        player.seekTo(Math.max(0, currTime - 10), true);
+    }
+
+    function fastForward() {
+        if (!player || typeof player.getCurrentTime !== 'function') return;
+        const currTime = player.getCurrentTime();
+        player.seekTo(currTime + 10, true);
     }
 
     function focusSearch() {
