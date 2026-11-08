@@ -132,10 +132,9 @@
             margin-top: 4px;
         }
 
-        iframe {
+        #player {
             width: 100%;
             height: 100%;
-            border: none;
             position: absolute;
             top: 0;
             left: 0;
@@ -284,8 +283,8 @@
                 <div class="welcome-time" id="welcomeClock">00:00</div>
                 <div class="welcome-text">วางลิงก์เพื่อเล่นเพลง</div>
             </div>
-            <!-- ตัวเล่น YouTube -->
-            <iframe id="ytPlayer" src="" allow="autoplay; encrypted-media"></iframe>
+            <!-- ตัวเล่น YouTube API -->
+            <div id="player"></div>
         </div>
     </div>
 
@@ -298,9 +297,9 @@
     <!-- Click Wheel -->
     <div class="click-wheel">
         <span class="wheel-btn btn-menu" onclick="focusSearch()">MENU</span>
-        <span class="wheel-btn btn-prev" onclick="alert('ปุ่มย้อนกลับ')"><i class="fa-solid fa-backward-step"></i></span>
-        <span class="wheel-btn btn-next" onclick="alert('ปุ่มถัดไป')"><i class="fa-solid fa-forward-step"></i></span>
-        <span class="wheel-btn btn-play-pause" onclick="togglePlayState()"><i class="fa-solid fa-play"></i> <i class="fa-solid fa-pause"></i></span>
+        <span class="wheel-btn btn-prev" onclick="seekVideo(-10)"><i class="fa-solid fa-backward-step"></i></span>
+        <span class="wheel-btn btn-next" onclick="seekVideo(10)"><i class="fa-solid fa-forward-step"></i></span>
+        <span class="wheel-btn btn-play-pause" onclick="togglePlay()"><i class="fa-solid fa-play"></i> <i class="fa-solid fa-pause"></i></span>
         
         <div class="center-button" onclick="loadYouTube()"></div>
     </div>
@@ -315,8 +314,10 @@
     <div class="color-dot" style="background: #111111;" onclick="changeTheme('theme-black')"></div>
 </div>
 
+<!-- โหลด YouTube IFrame API -->
+<script src="https://www.youtube.com/iframe_api"></script>
 <script>
-    let isPlaying = false;
+    let ytPlayer;
 
     // อัปเดตนาฬิกาเรียลไทม์
     function updateClock() {
@@ -331,6 +332,10 @@
     setInterval(updateClock, 1000);
     updateClock();
 
+    function onYouTubeIframeAPIReady() {
+        // เตรียม API ไว้ล่วงหน้า
+    }
+
     function extractVideoId(url) {
         if (!url) return null;
         const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
@@ -344,26 +349,42 @@
         
         if (videoId) {
             document.getElementById('welcomeDisplay').style.display = 'none';
-            const player = document.getElementById('ytPlayer');
-            player.src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
-            isPlaying = true;
+            
+            if (ytPlayer && typeof ytPlayer.loadVideoById === 'function') {
+                ytPlayer.loadVideoById(videoId);
+            } else {
+                ytPlayer = new YT.Player('player', {
+                    height: '100%',
+                    width: '100%',
+                    videoId: videoId,
+                    playerVars: {
+                        'autoplay': 1,
+                        'controls': 1,
+                        'enablejsapi': 1
+                    }
+                });
+            }
         } else if (input) {
             alert('กรุณากรอกลิงก์หรือ ID วิดีโอ YouTube ที่ถูกต้อง');
         }
     }
 
-    function togglePlayState() {
-        const player = document.getElementById('ytPlayer');
-        if (!player.src) return;
-        
-        // สลับสถานะจำลองการหยุด/เล่นผ่านการรีโหลดหรือแจ้งเตือนสถานะ
-        if (isPlaying) {
-            alert('หยุดชั่วคราว (Pause)');
-            isPlaying = false;
+    // ปุ่ม Play / Pause สลับสถานะจริง
+    function togglePlay() {
+        if (!ytPlayer || typeof ytPlayer.getPlayerState !== 'function') return;
+        const state = ytPlayer.getPlayerState();
+        if (state === YT.PlayerState.PLAYING) {
+            ytPlayer.pauseVideo();
         } else {
-            alert('เล่นต่อ (Play)');
-            isPlaying = true;
+            ytPlayer.playVideo();
         }
+    }
+
+    // ปุ่มย้อนกลับ / ข้ามไปข้างหน้า 10 วินาที
+    function seekVideo(seconds) {
+        if (!ytPlayer || typeof ytPlayer.getCurrentTime !== 'function') return;
+        const currentTime = ytPlayer.getCurrentTime();
+        ytPlayer.seekTo(currentTime + seconds, true);
     }
 
     function focusSearch() {
