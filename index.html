@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Music Player</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -18,12 +18,14 @@
             background-color: #0d0f17;
             background-image: radial-gradient(circle at 50% 30%, #1a1d2e 0%, #08090e 100%);
             color: #fff;
-            min-height: 100vh;
+            height: 100vh;
+            overflow: hidden; /* ล็อกไม่ให้หน้าเว็บเลื่อนสไลด์ */
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            padding: 20px;
+            padding: 10px;
+            touch-action: manipulation;
         }
 
         /* โครงตัวเครื่อง iPod */
@@ -39,8 +41,7 @@
             transition: all 0.4s ease;
         }
 
-        /* 5 ธีมสีใหม่หมด */
-        /* 1. Silver Classic */
+        /* 5 ธีมสี */
         .theme-silver {
             background: linear-gradient(145deg, #f0f0f0, #d5d5d5);
             border: 1px solid #c4c4c4;
@@ -48,7 +49,6 @@
         }
         .theme-silver .btn-search { background: #333; color: #fff; }
 
-        /* 2. Space Gray */
         .theme-spacegray {
             background: linear-gradient(145deg, #6c7078, #3d3f45);
             border: 1px solid #52555c;
@@ -56,7 +56,6 @@
         }
         .theme-spacegray .btn-search { background: #1a1b1f; color: #fff; }
 
-        /* 3. Midnight Blue */
         .theme-blue {
             background: linear-gradient(145deg, #1e3a8a, #0f172a);
             border: 1px solid #3b82f6;
@@ -64,7 +63,6 @@
         }
         .theme-blue .btn-search { background: #3b82f6; color: #fff; }
 
-        /* 4. Sunset Pink */
         .theme-pink {
             background: linear-gradient(145deg, #f43f5e, #881337);
             border: 1px solid #fb7185;
@@ -72,7 +70,6 @@
         }
         .theme-pink .btn-search { background: #e11d48; color: #fff; }
 
-        /* 5. Matte Black */
         .theme-black {
             background: linear-gradient(145deg, #222222, #080808);
             border: 1px solid #333333;
@@ -265,20 +262,20 @@
             transform: scale(0.94);
         }
 
-        /* พาเนลเลือกสีธีม (5 สีใหม่) */
+        /* พาเนลเลือกสีธีม (5 สี) */
         .color-picker {
             display: flex;
             gap: 12px;
-            margin-top: 24px;
+            margin-top: 16px;
             background: rgba(255, 255, 255, 0.05);
-            padding: 10px 18px;
+            padding: 8px 16px;
             border-radius: 25px;
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .color-dot {
-            width: 22px;
-            height: 22px;
+            width: 20px;
+            height: 20px;
             border-radius: 50%;
             cursor: pointer;
             border: 2px solid #fff;
@@ -327,7 +324,7 @@
     </div>
 </div>
 
-<!-- ตัวเลือกเปลี่ยนสีเครื่อง (5 สีใหม่) -->
+<!-- ตัวเลือกเปลี่ยนสีเครื่อง (5 สี) -->
 <div class="color-picker">
     <div class="color-dot" style="background: #e6e6e6;" onclick="changeTheme('theme-silver')"></div>
     <div class="color-dot" style="background: #3d3f45;" onclick="changeTheme('theme-spacegray')"></div>
